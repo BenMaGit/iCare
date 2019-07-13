@@ -33,11 +33,20 @@ app.post('/webSend', (req, res)=>{
 
 io.on('connection', function(socket){
     socket.on('lineSent', function(obj){
+        console.log(obj.message)
         io.emit('lineSent', obj);
       });
     socket.on('webSent', function(obj){
         console.log(obj.message)
         io.emit('webSent', obj)
+    })
+    socket.on('endSessionNotice', function(obj){
+        console.log(obj.userID)
+        io.emit('endSessionNotice', obj)
+    })
+    socket.on('endSessionReminder', function(msg){
+        console.log(msg)
+        io.emit('endSessionReminder', msg)
     })
   });
 
