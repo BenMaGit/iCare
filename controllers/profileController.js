@@ -13,7 +13,7 @@ async function register (req, res, next){
     let userId = req.body.lineID
     let date = req.body.date
     let time = req.body.time
-    console.log(userId+ "regist ID")
+    console.log(userId+ "register ID")
     let existed = await Profile.findbyEmail(email)
     
     if(existed){

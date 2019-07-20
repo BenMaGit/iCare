@@ -1,4 +1,7 @@
 const Appointment = require('../models/appointment')
+const timeChecker = require('../utils/timeChecker')
+
+
 
 const findOnDateAppt = async (req, res, next) =>{
     let appointmentDate = await Appointment.find().byDate(req.body.date)
@@ -7,7 +10,7 @@ const findOnDateAppt = async (req, res, next) =>{
 
 const checkExistingAppt = async (req, res, next) =>{
     let existingAppt = await Appointment.findByID(req.body.userId)
-    res.json({info: existingAppt})
+    res.json({appt: existingAppt})
 }
 
 const cancelAppt = async (req, res, next) =>{
@@ -26,7 +29,7 @@ const reserve = async (req, res, next) =>{
     let profile = req.body.profile
     let date = req.body.date
     let time = req.body.time
-    console.log(profile.userId)
+    console.log(profile.userID)
     let existingAppt = await Appointment.findByID(profile.userID)
     if(existingAppt){
         existingAppt.remove()
@@ -39,16 +42,15 @@ const reserve = async (req, res, next) =>{
     })
     appointment.save().then(()=>{
         res.json({status: 200, msg: 'success!'})
-    })    
-    
-   
-    
+    })      
 }
+
+
 
 module.exports = {
     findOnDateAppt,
     checkDoubleBooked,
     checkExistingAppt,
     cancelAppt,
-    reserve
+    reserve,
 }

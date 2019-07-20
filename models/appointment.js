@@ -17,6 +17,8 @@ appointmentSchema.query.byDate = function(date){
     return this.where({date:date})
 }
 
+
+
 /* appointmentSchema.query.byMonth = function(month){
     return this.find({})
 } */
