@@ -4,8 +4,8 @@ const Schema = mongoose.Schema
 const profileSchema = new Schema({
     email: String,
     userID: String,
-    name: String
-
+    name: String,
+    registrationDate: String
 })
 
 profileSchema.statics.lookUp = function (userID){

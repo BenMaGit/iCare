@@ -13,6 +13,7 @@ async function register (req, res, next){
     let userId = req.body.lineID
     let date = req.body.date
     let time = req.body.time
+    let topic = req.body.topic
     console.log(userId+ "register ID")
     let existed = await Profile.findbyEmail(email)
     
@@ -36,7 +37,7 @@ async function register (req, res, next){
       });
     //
     //encrypt
-    let token = jwt.sign({ email: email, name: name, lineID: userId, date: date, time: time}, configs.jwtSalt, {expiresIn: 60 * 60})
+    let token = jwt.sign({ email: email, name: name, lineID: userId, date: date, time: time, topic: topic}, configs.jwtSalt, {expiresIn: 60 * 60})
     //生成信件裡的Api path 
     let url = 'http://35.194.253.53:3000/user/auth'+'?token='+token
     
@@ -73,6 +74,9 @@ async function createProfile(req, res, next){
     let userId = user.lineID;
     let date = user.date;
     let time = user.time;
+    let topic = user.topic
+    console.log(topic+'TOPIC')
+    let registrationDate = new Date().toLocaleDateString()
     let existed = await Profile.findbyEmail(email)
     
     if(existed){
@@ -86,14 +90,16 @@ async function createProfile(req, res, next){
         let newProfile = new Profile({
             name: name,
             email: email,
-            userID: userId
+            userID: userId,
+            registrationDate: registrationDate
         })
         //create profile and make appointment
         newProfile.save().then(()=>{
             let appointment = new Appointment({
                 profile: newProfile,
                 date: date,
-                time: time
+                time: time,
+                topic: topic
             })
             appointment.save().then(()=>{
                 res.redirect(301, 'http://35.194.223.224/verifysuccess?status=success' + '&date=' + encodeURIComponent(date) + '&time=' + encodeURIComponent(time))
@@ -101,6 +107,7 @@ async function createProfile(req, res, next){
         })
     }
 }
+
 module.exports = {
         register,
         createProfile 

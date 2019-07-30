@@ -4,7 +4,8 @@ const Schema = mongoose.Schema
 const appointmentSchema = new  Schema({
     profile: JSON,
     date: String,
-    time: String
+    time: String,
+    topic: String
 })
 
 appointmentSchema.statics.checkAvailableTime = function(date, time){
@@ -15,6 +16,10 @@ appointmentSchema.statics.findByID = function(userId){
 }
 appointmentSchema.query.byDate = function(date){
     return this.where({date:date})
+}
+
+appointmentSchema.query.all = function(){
+    return this.where()
 }
 
 

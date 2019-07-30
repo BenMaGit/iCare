@@ -28,13 +28,14 @@ const appointmentReminder = async()=>{
     }
 }
 
-setInterval(appointmentReminder, 1000 * 10)
+//setInterval(appointmentReminder, 1000 * 10)
 
 
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token");
+    res.header('Access-Control-Allow-Methods', 'OPTIONS, POST, DELETE')
     next()
 })
 app.use(bodyParser.json())
@@ -56,9 +57,17 @@ app.post('/webSend', (req, res)=>{
 })
 
 io.on('connection', function(socket){
+    socket.on('room', function(room){
+        console.log(room)
+        socket.join(room)
+    })
     socket.on('lineSent', function(obj){
         console.log(obj.message)
-        io.emit('lineSent', obj);
+        console.log(obj.therapist)
+
+        //io.emit('lineSent', obj);
+        //send message to destined therapist
+        io.to(obj.therapist).emit('lineSent', obj)
       });
     socket.on('webSent', function(obj){
         console.log(obj.message)
@@ -67,14 +76,20 @@ io.on('connection', function(socket){
     socket.on('endSessionNotice', function(obj){
         console.log('Session End')
         io.emit('endSessionNotice', obj)
+        //notification to desitned therapist
+        //io.to(obj.appointment.therapist).emit('endSessionNotice', obj)
     })
-    socket.on('endSessionReminder', function(msg){
-        console.log(msg)
-        io.emit('endSessionReminder', msg)
+    socket.on('endSessionReminder', function(obj){
+        console.log(obj)
+        //io.emit('endSessionReminder', msg)
+        io.to(obj.therapist).emit('endSessionReminder', obj.message)
     })
-    socket.on('sessionStart', function(userId){
-        console.log(userId)
-        io.emit('sessionStart', userId)
+    socket.on('sessionStart', function(obj){
+        console.log(obj)
+        //io.emit('sessionStart', obj)
+        //notification to desitned therapist
+        console.log(obj.appointment.therapist +' session start')
+        io.to(obj.appointment.therapist).emit('sessionStart', obj)
     })
   });
 
