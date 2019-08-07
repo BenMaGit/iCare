@@ -1,6 +1,8 @@
 const shiftSchedule = require('../models/shiftSchedule')
+const Appointment = require('../models/appointment')
 
 const arrangeSchedule = async (req ,res)=>{
+    console.log('Shift Arrange')
     let therapist = req.body.name
     let day = req.body.start.split(' ')[0]
     let startTime = parseInt(req.body.start.split(' ')[1].split(':')[0])
@@ -43,8 +45,11 @@ const arrangeSchedule = async (req ,res)=>{
 }
 
 const rearrangeShift = async (req, res)=>{
-    let day = req.query.day
-    let time = req.query.time.split(':')[0]
+    console.log('Shift re-arrange')
+    let day = req.body.day
+    let time = req.body.time.split(':')[0]
+    //let type = req.query.type
+    let subTherapist = req.body.sub
     if(time >= 12){
         time = time + ':00PM'
     }else if(time < 10){
@@ -52,13 +57,12 @@ const rearrangeShift = async (req, res)=>{
     }else{
         time = time + ':00AM'
     }
-    console.log(day)
-    console.log(time)
-    console.log(req.query.name)
     let shift = await shiftSchedule.findOne().byDayAndTime(day, time)
-    if(shift.therapist === req.query.name){
-        shift.remove().then(()=>{
-            res.json({status:200, msg:'已成功移除'})
+    console.log('Sub-'+ subTherapist)
+    if(shift.therapist === req.body.therapist){
+        shift.updateOne({therapist:subTherapist}).then(()=>{
+                res.json({status:200, msg:'已成功更改'})
+                return
         })
     }else{
         res.json({status: 409, msg:'你只可以修改自己的班表'})
@@ -66,6 +70,7 @@ const rearrangeShift = async (req, res)=>{
 }
 
 const getSchedule = async(req, res)=>{
+    console.log('Get scheudle')
     let schedule = await shiftSchedule.findAll()
     res.json({status: 200, schedule:schedule})
 }

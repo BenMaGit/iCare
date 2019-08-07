@@ -14,6 +14,10 @@ appointmentSchema.statics.checkAvailableTime = function(date, time){
 appointmentSchema.statics.findByID = function(userId){
     return this.findOne({'profile.userID':userId})
 }
+appointmentSchema.query.byTherapist = function(date, therapist){
+    return this.where({date:date, therapist:therapist})
+}
+
 appointmentSchema.query.byDate = function(date){
     return this.where({date:date})
 }
@@ -21,6 +25,7 @@ appointmentSchema.query.byDate = function(date){
 appointmentSchema.query.all = function(){
     return this.where()
 }
+
 
 
 
